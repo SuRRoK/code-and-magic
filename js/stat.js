@@ -1,3 +1,4 @@
+'use strict';
 var CLOUD_X = 100;
 var CLOUD_Y = 10;
 var CLOUD_W = 420;
@@ -6,7 +7,7 @@ var CLOUD_COLOR = 'white';
 var CLOUD_SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
 var CLOUD_TEXT_COLOR = 'black';
 var CLOUD_TEXT_STYLE = '16px PT Mono';
-
+var CLOUD_TEXT_LINE_HEIGHT = 20;
 
 var histogramHeight = 150;
 var histogramColWidth = 40;
@@ -24,36 +25,36 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.fillRect(CLOUD_X, CLOUD_Y, CLOUD_W, CLOUD_H);
   ctx.fillStyle = CLOUD_TEXT_COLOR;
   ctx.font = CLOUD_TEXT_STYLE;
-  ctx.strokeText('Ура! Вы победили!', CLOUD_X + 20, CLOUD_Y + 30);
-  ctx.fillText('Список результатов:', CLOUD_X +20, CLOUD_Y + 50);
+  ctx.strokeText('Ура! Вы победили!', CLOUD_X + 30, CLOUD_Y + CLOUD_TEXT_LINE_HEIGHT * 1.5);
+  ctx.fillText('Список результатов:', CLOUD_X + 30, CLOUD_Y + CLOUD_TEXT_LINE_HEIGHT * 3);
   var maxTime = times[0];
   for (var i = 1; i < times.length; i++) {
     if (maxTime < times[i]) {
       maxTime = times[i];
     }
   }
-  colHeight = function (time) {
+  var colHeight = function (time) {
     return Math.floor((histogramHeight * time) / maxTime);
-  }
+  };
 
   var histColPositionX = CLOUD_X;
   var histColPositionY = 80;
   var playerColPositionY = 0;
   var playerColHeight = 0;
 
-  for (var i = 0; i < names.length; i++) {
+  for (i = 0; i < names.length; i++) {
     if (names[i] !== 'Вы') {
-      ctx.fillStyle = histogramOtherColor()
+      ctx.fillStyle = histogramOtherColor();
     } else {
       ctx.fillStyle = histogramPlayerColor;
     }
     histColPositionX += histogramColDist;
     playerColHeight = colHeight(times[i]);
-    playerColPositionY = histColPositionY + (histogramHeight - playerColHeight)
+    playerColPositionY = histColPositionY + (histogramHeight - playerColHeight);
 
-    ctx.fillRect(histColPositionX,playerColPositionY, histogramColWidth, playerColHeight)
+    ctx.fillRect(histColPositionX, playerColPositionY, histogramColWidth, playerColHeight);
+    ctx.fillText(names[i], histColPositionX, histColPositionY + histogramHeight + CLOUD_TEXT_LINE_HEIGHT);
     histColPositionX += histogramColWidth;
   }
-  console.log(names)
 
 };

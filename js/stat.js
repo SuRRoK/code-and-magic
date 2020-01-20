@@ -18,6 +18,16 @@ var histogramOtherColor = function () {
   return 'rgba(0, 83, 138, ' + alpha + ')';
 };
 
+var findMax = function (array) {
+  var max = array[0];
+  for (var i = 1; i < array.length; i++) {
+    if (max < array[i]) {
+      max = array[i];
+    }
+  }
+  return max;
+};
+
 window.renderStatistics = function (ctx, names, times) {
   ctx.fillStyle = CLOUD_SHADOW_COLOR;
   ctx.fillRect(CLOUD_X + 10, CLOUD_Y + 10, CLOUD_W, CLOUD_H);
@@ -27,22 +37,19 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.font = CLOUD_TEXT_STYLE;
   ctx.strokeText('Ура! Вы победили!', CLOUD_X + 30, CLOUD_Y + CLOUD_TEXT_LINE_HEIGHT * 1.5);
   ctx.fillText('Список результатов:', CLOUD_X + 30, CLOUD_Y + CLOUD_TEXT_LINE_HEIGHT * 3);
-  var maxTime = times[0];
-  for (var i = 1; i < times.length; i++) {
-    if (maxTime < times[i]) {
-      maxTime = times[i];
-    }
-  }
+
+  var maxTime = findMax(times);
+
   var colHeight = function (time) {
     return Math.floor((histogramHeight * time) / maxTime);
   };
 
   var histColPositionX = CLOUD_X;
-  var histColPositionY = 80;
+  var histColPositionY = 100;
   var playerColPositionY = 0;
   var playerColHeight = 0;
 
-  for (i = 0; i < names.length; i++) {
+  for (var i = 0; i < names.length; i++) {
     if (names[i] !== 'Вы') {
       ctx.fillStyle = histogramOtherColor();
     } else {
@@ -51,7 +58,7 @@ window.renderStatistics = function (ctx, names, times) {
     histColPositionX += histogramColDist;
     playerColHeight = colHeight(times[i]);
     playerColPositionY = histColPositionY + (histogramHeight - playerColHeight);
-
+    ctx.fillText(Math.floor(times[i]), histColPositionX, playerColPositionY - CLOUD_TEXT_LINE_HEIGHT * 0.5);
     ctx.fillRect(histColPositionX, playerColPositionY, histogramColWidth, playerColHeight);
     ctx.fillText(names[i], histColPositionX, histColPositionY + histogramHeight + CLOUD_TEXT_LINE_HEIGHT);
     histColPositionX += histogramColWidth;

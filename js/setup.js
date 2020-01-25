@@ -111,6 +111,14 @@ var wizardsList = document.querySelector('.setup-similar-list');
 var setupSimilar = document.querySelector('.setup-similar');
 hiddenToggle(setupSimilar);
 
+var nameInput = setup.querySelector('.setup-user-name');
+nameInput.addEventListener('focus', function () {
+  document.removeEventListener('keydown', popupEscClose);
+});
+nameInput.addEventListener('blur', function () {
+  document.addEventListener('keydown', popupEscClose);
+});
+
 var wizards = [];
 
 var wizardsGenerate = function (count) {

@@ -44,6 +44,7 @@
   });
 
   var setup = document.querySelector('.setup');
+  var form = setup.querySelector('.setup-wizard-form');
 
   var setupSimilar = document.querySelector('.setup-similar');
   window.data.hiddenToggle(setupSimilar);
@@ -70,9 +71,9 @@
   });
 
   var switchWizardCoatColor = function () {
-    var wizardCoatColor = document.forms[0].elements['coat-color'].value;
+    var wizardCoatColor = form.elements['coat-color'].value;
     var nextColor = nextElement(window.data.COAT_COLORS, wizardCoatColor);
-    document.forms[0].elements['coat-color'].value = nextColor;
+    form.elements['coat-color'].value = nextColor;
     wizardCoat.style.fill = nextColor;
   };
 
@@ -82,9 +83,9 @@
   });
 
   var switchWizardEyesColor = function () {
-    var wizardEyesColor = document.forms[0].elements['eyes-color'].value;
+    var wizardEyesColor = form.elements['eyes-color'].value;
     var nextColor = nextElement(window.data.EYES_COLORS, wizardEyesColor);
-    document.forms[0].elements['eyes-color'].value = nextColor;
+    form.elements['eyes-color'].value = nextColor;
     wizardEyes.style.fill = nextColor;
   };
 
@@ -94,9 +95,9 @@
   });
 
   var switchFireballColor = function () {
-    var fireballColor = document.forms[0].elements['fireball-color'].value;
+    var fireballColor = form.elements['fireball-color'].value;
     var nextColor = nextElement(window.data.FIREBALL_COLORS, fireballColor);
-    document.forms[0].elements['fireball-color'].value = nextColor;
+    form.elements['fireball-color'].value = nextColor;
     fireball.style.backgroundColor = nextColor;
   };
 
@@ -140,4 +141,33 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  var errorHandler = function () {
+    return NaN;
+  };
+
+  form.addEventListener('submit', function (evtForm) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function () {
+      console.log('before onLoad');
+      console.log('XHR-Status: ' + xhr.status);
+      console.log(xhr.response);
+      if (xhr.status === 200) {
+        setup.classList.add('hidden');
+      } else {
+        errorHandler('Статус ответа сервера: ' + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+    console.log(xhr);
+    xhr.responseType = 'json';
+    xhr.open('POST', URL);
+    console.log(xhr);
+    xhr.send(new FormData(form));
+    // window.backend.save(new FormData(form), function (response) {
+    //   setup.classList.add('hidden');
+    //   console.log('All OK, response:' + response);
+    // }, errorHandler);
+    evtForm.preventDefault();
+  });
+  // window.backend.load();
 })();

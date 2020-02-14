@@ -1,35 +1,37 @@
 'use strict';
-var serverStatuses = new Map(
+var serverStatus = new Map(
 
 );
 
 (function () {
-  var URL = 'https://js.dump.academy/code-and-magick/data';
-  var load = function () {
-    var xhr1 = new XMLHttpRequest();
-    var onLoad = function() {
-      return JSON.parse(xhr1.responseText);
-    };
-    // console.log(onLoad());
-    xhr1.addEventListener('load', function () {
+
+  var load = function (onLoad, onError) {
+    var URL = 'https://js.dump.academy/code-and-magick/data';
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', function () {
       {
         try {
-          console.log(onLoad(xhr1.responseText));
+          if (xhr.status === 200) {
+            onLoad(xhr.response);
+          } else {
+            onError('Статус ответа сервера: ' + xhr.status + ' ' + xhr.statusText);
+          }
         } catch (e) {
           console.log(e.message);
         }
       }
     });
-
-    xhr1.open('GET', URL);
-    xhr1.send();
+    xhr.responseType = 'json';
+    xhr.open('GET', URL);
+    xhr.send();
   };
-  var save = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    console.log(data);
 
-    xhr.addEventListener('progress', function () {
-      console.log("before onLoad");
+  var save = function (data, onLoad, onError) {
+    var URL = 'https://js.dump.academy/code-and-magick';
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', function () {
       console.log(xhr.status);
       if (xhr.status === 200) {
         onLoad(xhr.response);
@@ -37,12 +39,10 @@ var serverStatuses = new Map(
         onError('Статус ответа сервера: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
-
     xhr.responseType = 'json';
     xhr.open('POST', URL);
     xhr.send(data);
   };
-  //window.backend = {};
   window.backend = {
     load,
     save,

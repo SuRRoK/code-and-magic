@@ -142,32 +142,15 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  var errorHandler = function () {
-    return NaN;
+  var errorHandler = function (text) {
+    console.log(text);
   };
 
   form.addEventListener('submit', function (evtForm) {
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', function () {
-      console.log('before onLoad');
-      console.log('XHR-Status: ' + xhr.status);
-      console.log(xhr.response);
-      if (xhr.status === 200) {
-        setup.classList.add('hidden');
-      } else {
-        errorHandler('Статус ответа сервера: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-    console.log(xhr);
-    xhr.responseType = 'json';
-    xhr.open('POST', URL);
-    console.log(xhr);
-    xhr.send(new FormData(form));
-    // window.backend.save(new FormData(form), function (response) {
-    //   setup.classList.add('hidden');
-    //   console.log('All OK, response:' + response);
-    // }, errorHandler);
+    window.backend.save(new FormData(form), function (response) {
+      setup.classList.add('hidden');
+      console.log(response);
+    }, errorHandler);
     evtForm.preventDefault();
   });
-  // window.backend.load();
 })();
